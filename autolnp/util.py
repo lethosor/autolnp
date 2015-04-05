@@ -14,7 +14,8 @@ def load_source(path, name=''):
     return imp.load_source(name, path)
 
 def touchdir(path):
-    if not os.path.exists(path):
-        os.mkdir(path)
-    elif not os.path.isdir(path):
-        raise OSError('Exists but is not a directory: %s' % path)
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise

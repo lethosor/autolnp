@@ -16,7 +16,11 @@ parser.add_argument('-a', '--arch', '--platform', '--platforms',
     nargs='+',
     choices=autolnp.pack.valid_platforms,
     default=autolnp.pack.valid_platforms)
+parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output')
+
 args = parser.parse_args()
+if args.verbose:
+    autolnp.log.debug.enabled = True
 if args.pack is not None:
     if not os.path.isfile(args.pack):
         exit('Not found: %s', args.pack)
@@ -24,8 +28,7 @@ if args.pack is not None:
     assert hasattr(pack, 'main') and hasattr(pack.main, '__call__'), 'pack has no main() function'
     touchdir('builds')
     touchdir('downloads')
-    args.platforms = list(set(args.platforms))
     autolnp.pack.create(name=os.path.splitext(os.path.basename(args.pack))[0],
-        platforms=args.platforms, dest='builds')
+        module=pack, platforms=args.platforms, dest='builds')
 else:
     print('No action taken - use "--help" for help')
